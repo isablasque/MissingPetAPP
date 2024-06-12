@@ -1,60 +1,94 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Produto from '../Components/Produto';
-import Stories from '../Components/Stories';
-
+import Animal from '../Components/Animal';
+import Detalhes from '../Components/Detalhes';
 
 export default function Home() {
+  const [animal, setAnimal] = useState([]);
+  const [erro, setError] = useState(false)
+  const [detalhes, setDetalhes] = useState(false);
+  const [item, setItem] = useState();
 
-  const [produtos, setProdutos] = useState([]);
-
-  async function getProdutos() {
-    await fetch('https://fakestoreapi.com/products', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json'
+  async function getAnimal() {
+    try {
+      const response = await fetch('http://10.139.75.49:5251/api/Animal/GetAllAnimal', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.ok) {
+        const json = await response.json();
+        setAnimal(json);
+      } else {
+        setError(true)
       }
-    })
-      .then(res => res.json())
-      .then(json => setProdutos(json))
-      .catch(err => console.log(err))
+    } catch (err) {
+      setError(true)
+    }
   }
 
   useEffect(() => {
-    getProdutos();
-  }, [])
+    getAnimal();
+  }, []);
+
+  function exibirdetalhes(item) {
+    setItem(item);
+    setDetalhes(true);
+  }
+
+  function renderAnimais({ item }) {
+    return (
+        <View>
+          <Animal
+            nome={item.animalNome}
+            raca={item.animalRaca}
+            tipo={item.animalTipo}
+            cor={item.animalCor}
+            sexo={item.animalSexo}
+            observacao={item.animalObservacao}
+            foto={item.animalFoto}
+            dtdesaparecimento={item.animalDtDesaparecimento}
+            dtencontro={item.animalDtEncontro}
+            status={item.animalStatus}
+            exibirdetalhes={ () => exibirdetalhes( item ) }
+          />
+        </View>
+    )
+  }
 
   return (
     <View style={css.container}>
-      {produtos ?
+      {animal.length > 0 && !detalhes &&
         <>
-          <Stories produtos={produtos} />
-          <FlatList
-            data={produtos}
-            renderItem={({ item }) => <Produto title={item.title} price={item.price} image={item.image} description={item.description} category={item.category} rating={item.rating} />}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ height: (produtos.length * 600) + 110 }}
+          <FlatList style={css.flatlist}
+            data={animal}
+            renderItem={renderAnimais}
+            keyExtractor={(item) => item.animalId}
+            contentContainerStyle={css.listContainer}
           />
         </>
-        :
-        <Text style={css.text}>Carregando produtos...</Text>
       }
+      {!animal && !detalhes &&
+        <Text style={css.text}>Nenhum animal encontrado.</Text>
+      }
+      {detalhes && <Detalhes handle={setDetalhes} item={item} />}
     </View>
   )
 }
+
 const css = StyleSheet.create({
   container: {
-    backgroundColor: "#191919",
+    backgroundColor: "#F9F5F4",
     flexGrow: 1,
-    color: "white",
+    color: "black",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   text: {
-    color: "white"
+    color: "black",
   },
-  stories: {
-    width: "100%",
-    height: 100
+  teste: {
+    backgroundColor: "red",
   }
 })
