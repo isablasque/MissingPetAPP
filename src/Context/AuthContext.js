@@ -5,11 +5,13 @@ export const AuthContext = createContext(0);
 function AuthProvider({ children }) {
     const [logado, setLogado] = useState(false);
     const [error, setError] = useState(false);
+    const [cadastro, setCadastro] = useState(false)
+    const [usuarioId, setUsuarioId] = useState(false)
 
     async function Login(email, senha) {
 
         if (email != "" && senha != "") {
-            await fetch('http://10.139.75.49:5251/api/Usuario/Login', {
+            await fetch('http://10.139.75.6:5251/api/Usuario/Login', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json'
@@ -23,6 +25,7 @@ function AuthProvider({ children }) {
                 .then(json => {
                     if( json.usuarioId ) {
                         setLogado( true );
+                        setUsuarioId(json.usuarioId);
                     } else {
                         setError( true );
                     }
@@ -35,7 +38,7 @@ function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ logado: logado, Login, error: error }}>
+        <AuthContext.Provider value={{ logado: logado, Login, error: error, cadastro: cadastro, setCadastro , usuarioId:usuarioId}}>
             {children}
         </AuthContext.Provider>
     )

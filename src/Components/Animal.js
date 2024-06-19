@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-export default function Animal({ nome, raca, tipo, cor, sexo, dtdesaparecimento, dtencontro, status, foto, observacao, exibirdetalhes }) {
+export default function Animal({ nome, id, raca, tipo, cor, sexo, dtdesaparecimento, dtencontro, status, foto, observacao, exibirdetalhes }) {
     return (
       <View>
         <View style={css.container}>

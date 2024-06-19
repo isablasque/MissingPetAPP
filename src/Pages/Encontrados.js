@@ -1,14 +1,14 @@
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Animal from '../Components/Animal';
-import Detalhes from '../Components/Detalhes';
+import Detalhes from '../Components/DetalhesEncontrado';
+import AnimalEncontrado from '../Components/AnimalEncontrado'
 
 export default function Home() {
   const [animal, setAnimal] = useState([]);
-  const [erro, setError] = useState(false);
+  const [erro, setError] = useState(false)
   const [detalhes, setDetalhes] = useState(false);
   const [item, setItem] = useState();
-  
+
   async function getAnimal() {
     try {
       const response = await fetch('http://10.139.75.6:5251/api/Animal/GetAllAnimal', {
@@ -39,27 +39,26 @@ export default function Home() {
 
   function renderAnimais({ item }) {
     return (
-        <View>
-          <Animal
-            nome={item.animalNome}
-            id={item.animalId}
-            raca={item.animalRaca}
-            tipo={item.animalTipo}
-            cor={item.animalCor}
-            sexo={item.animalSexo}
-            observacao={item.animalObservacao}
-            foto={item.animalFoto}
-            dtdesaparecimento={item.animalDtDesaparecimento}
-            dtencontro={item.animalDtEncontro}
-            status={item.animalStatus}
-            exibirdetalhes={ () => exibirdetalhes( item ) }
-          />
-        </View>
+      <View>
+        <AnimalEncontrado
+          nome={item.animalNome}
+          raca={item.animalRaca}
+          tipo={item.animalTipo}
+          cor={item.animalCor}
+          sexo={item.animalSexo}
+          observacao={item.animalObservacao}
+          foto={item.animalFoto}
+          dtdesaparecimento={item.animalDtDesaparecimento}
+          dtencontro={item.animalDtEncontro}
+          status={item.animalStatus}
+          exibirdetalhes={() => exibirdetalhes(item)}
+        />
+      </View>
     )
   }
-  const animalFiltrado = animal.filter(animal => animal.animalStatus === 1)
+  const animalFiltrado = animal.filter(animal => animal.animalStatus === 0)
   return (
-    <View Style={css.container}>
+    <View style={css.container}>
       {animal.length > 0 && !detalhes &&
         <>
           <FlatList style={css.flatlist}
@@ -93,7 +92,7 @@ const css = StyleSheet.create({
     backgroundColor: "red",
   },
   logo: {
-    width: "100%",
+    width: "85%",
     height: "10%",
     resizeMode: "contain"
   },
